@@ -1,14 +1,12 @@
 //
-//  TranscriptionManager.m
-//
-//  Created by Jackson Barnes on 10/6/23.
-//  Copyright © 2023 Apple. All rights reserved.
+//  TranscriptionViewController.m
+//  YourApp
 //
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 #import <Speech/Speech.h>
 
-@interface TranscriptionManager : NSObject
+@interface TranscriptionViewController : NSObject
 
 @property (nonatomic, strong) SFSpeechRecognizer *speechRecognizer;
 @property (nonatomic, strong) SFSpeechAudioBufferRecognitionRequest *recognitionRequest;
@@ -21,26 +19,11 @@ typedef void (*TranscriptionCallback)(const char*);
 // Store the callback for later use
 @property (nonatomic) TranscriptionCallback s_transcriptionCallback;
 
-//Class property to access the shared instance
-@property (class, nonatomic, readonly) TranscriptionManager *sharedManager;
-
 @end
 
-@implementation TranscriptionManager
+@implementation TranscriptionViewController
 
-// Static variable for our shared instance
-static TranscriptionManager *_sharedManager = nil;
-
-// Class property to access the shared instance
-+ (TranscriptionManager *)sharedManager {
-    if (!_sharedManager) {
-        _sharedManager = [[TranscriptionManager alloc] initPrivate];
-    }
-    return _sharedManager;
-}
-
-// Private init for internal use
-- (instancetype)initPrivate {
+- (instancetype)init {
     self = [super init];
     if (self) {
         _speechRecognizer = [[SFSpeechRecognizer alloc] initWithLocale:[NSLocale localeWithLocaleIdentifier:@"en-US"]];
@@ -49,24 +32,18 @@ static TranscriptionManager *_sharedManager = nil;
     return self;
 }
 
-// Overridden public init to avoid direct initialization
-- (instancetype)init {
-    [NSException raise:@"SingletonPattern" format:@"Use +[TranscriptionManager sharedManager], not -init"];
-    return nil;
-}
-
-+ (void)startRecording {
-    [[self sharedManager] startRecordingInstanceMethod];
+- (void)startRecording {
+    if (!_audioEngine.isRunning) {
+        [self startRecordingInstanceMethod];
+    }
 }
 
 - (void)startRecordingInstanceMethod {
-    // Cancel the previous task if it's running.
     if (_recognitionTask) {
         [_recognitionTask cancel];
         _recognitionTask = nil;
     }
 
-    // Configure the audio session for the app.
     AVAudioSession *audioSession = [AVAudioSession sharedInstance];
     NSError *audioSessionError;
     [audioSession setCategory:AVAudioSessionCategoryPlayAndRecord
@@ -76,7 +53,6 @@ static TranscriptionManager *_sharedManager = nil;
     [audioSession setActive:YES withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:&audioSessionError];
     AVAudioInputNode *inputNode = _audioEngine.inputNode;
 
-    // Create and configure the speech recognition request.
     _recognitionRequest = [[SFSpeechAudioBufferRecognitionRequest alloc] init];
     if (!_recognitionRequest) {
         NSLog(@"Unable to create a SFSpeechAudioBufferRecognitionRequest object");
@@ -93,7 +69,6 @@ static TranscriptionManager *_sharedManager = nil;
 
         if (result) {
             isFinal = result.isFinal;
-
             SFTranscriptionSegment *lastSegment = result.bestTranscription.segments.lastObject;
             if (lastSegment && strongSelf.s_transcriptionCallback) {
                 const char *transcription = [lastSegment.substring UTF8String];
@@ -105,19 +80,14 @@ static TranscriptionManager *_sharedManager = nil;
         if (error || isFinal) {
             [strongSelf->_audioEngine stop];
             [inputNode removeTapOnBus:0];
-
             strongSelf->_recognitionRequest = nil;
             strongSelf->_recognitionTask = nil;
         }
     }];
 
-    // Configure the microphone input.
     AVAudioFormat *recordingFormat = [inputNode outputFormatForBus:0];
     [inputNode installTapOnBus:0 bufferSize:1024 format:recordingFormat block:^(AVAudioPCMBuffer * _Nonnull buffer, AVAudioTime * _Nonnull when) {
-        __strong __typeof__(weakSelf) strongSelf = weakSelf;
-        if (!strongSelf) return;
-
-        [strongSelf->_recognitionRequest appendAudioPCMBuffer:buffer];
+        [weakSelf.recognitionRequest appendAudioPCMBuffer:buffer];
     }];
 
     [_audioEngine prepare];
@@ -128,37 +98,34 @@ static TranscriptionManager *_sharedManager = nil;
     }
 }
 
-+ (void)stopRecording {
-    [[self sharedManager] stopRecordingInstanceMethod];
-}
-
-- (void)stopRecordingInstanceMethod {
+- (void)stopRecording {
     if ([_audioEngine isRunning]) {
         [_audioEngine stop];
         [_recognitionRequest endAudio];
     }
 }
 
-+(void)logTest {
-    NSLog(@"Hello, World!");
-}
-
 @end
 
 extern "C" {
+    TranscriptionViewController *transcriptionVC = nil;
+    
+    TranscriptionViewController *getTranscriptionVC() {
+        if (transcriptionVC == nil) {
+            transcriptionVC = [[TranscriptionViewController alloc] init];
+        }
+        return transcriptionVC;
+    }
+
     void _SetTranscriptionCallback(TranscriptionCallback callback) {
-        [TranscriptionManager sharedManager].s_transcriptionCallback = callback;
+        getTranscriptionVC().s_transcriptionCallback = callback;
     }
 
     void _StartRecording() {
-        [TranscriptionManager startRecording];
+        [getTranscriptionVC() startRecording];
     }
 
     void _StopRecording() {
-        [TranscriptionManager stopRecording];
-    }
-
-    void _LogTest() {
-        [TranscriptionManager logTest];
+        [getTranscriptionVC() stopRecording];
     }
 }
