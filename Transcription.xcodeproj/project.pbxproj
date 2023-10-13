@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		478B61342AD0702A00D12A53 /* TranscriptionManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 478B61332AD0702A00D12A53 /* TranscriptionManager.mm */; };
+		4790AC382AD997A800BB45AF /* TranscriptionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4790AC372AD997A800BB45AF /* TranscriptionController.swift */; };
+		4790AC3A2AD997CE00BB45AF /* TranscriptionManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4790AC392AD997CE00BB45AF /* TranscriptionManager.mm */; };
+		4790AC3E2AD99CC400BB45AF /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4790AC3D2AD99CC400BB45AF /* Speech.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +26,9 @@
 
 /* Begin PBXFileReference section */
 		470C455B2AD06FD200F40D41 /* libTranscription.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTranscription.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		478B61332AD0702A00D12A53 /* TranscriptionManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TranscriptionManager.mm; sourceTree = "<group>"; };
+		4790AC372AD997A800BB45AF /* TranscriptionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscriptionController.swift; sourceTree = "<group>"; };
+		4790AC392AD997CE00BB45AF /* TranscriptionManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TranscriptionManager.mm; sourceTree = "<group>"; };
+		4790AC3D2AD99CC400BB45AF /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/System/Library/Frameworks/Speech.framework; sourceTree = DEVELOPER_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4790AC3E2AD99CC400BB45AF /* Speech.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,8 +46,10 @@
 		470C45522AD06FD100F40D41 = {
 			isa = PBXGroup;
 			children = (
-				478B61332AD0702A00D12A53 /* TranscriptionManager.mm */,
+				4790AC372AD997A800BB45AF /* TranscriptionController.swift */,
+				4790AC392AD997CE00BB45AF /* TranscriptionManager.mm */,
 				470C455C2AD06FD200F40D41 /* Products */,
+				4790AC3C2AD99CC400BB45AF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -52,6 +59,14 @@
 				470C455B2AD06FD200F40D41 /* libTranscription.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4790AC3C2AD99CC400BB45AF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4790AC3D2AD99CC400BB45AF /* Speech.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -113,7 +128,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				478B61342AD0702A00D12A53 /* TranscriptionManager.mm in Sources */,
+				4790AC3A2AD997CE00BB45AF /* TranscriptionManager.mm in Sources */,
+				4790AC382AD997A800BB45AF /* TranscriptionController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
