@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
     // Define the callback types
-    typedef void (*TranscriptionDoneCallback)();
+    typedef void (*TranscriptionDoneCallback)(const char*);
     typedef void (*TranscriptionCallback)(const char*);
 
     // Function declarations

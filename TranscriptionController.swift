@@ -10,7 +10,7 @@ import Speech
     private let audioEngine = AVAudioEngine()
     
     @objc public var transcriptionCallback: ((String) -> Void)?
-    @objc public var transcriptionDoneCallback: (() -> Void)?
+    @objc public var transcriptionDoneCallback: ((String) -> Void)?
     
     @objc public var isRecording = false
     
@@ -60,7 +60,7 @@ import Speech
                 self.transcriptionCallback?(transcription)
                 
                 if finalResult {
-                    self.transcriptionDoneCallback?()
+                    self.transcriptionDoneCallback?(transcription)
                 }
             }
 

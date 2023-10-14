@@ -10,15 +10,15 @@ extern "C" {
         return transcriptionController;
     }
 
-    void _SetTranscriptionDoneCallback(void(*callback)()) {
-        [getTranscriptionController() setTranscriptionDoneCallback:^{
-            callback();
+    void _SetTranscriptionDoneCallback(void(*callback)(const char*)) {
+        [getTranscriptionController() setTranscriptionDoneCallback:^(NSString* finalTranscription){
+            callback([finalTranscription UTF8String]);
         }];
     }
 
     void _SetTranscriptionCallback(void(*callback)(const char*)) {
-        [getTranscriptionController() setTranscriptionCallback:^(NSString* transcription) {
-            callback([transcription UTF8String]);
+        [getTranscriptionController() setTranscriptionCallback:^(NSString* partialTranscription) {
+            callback([partialTranscription UTF8String]);
         }];
     }
 
